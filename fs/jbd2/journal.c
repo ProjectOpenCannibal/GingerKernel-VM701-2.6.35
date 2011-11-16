@@ -467,7 +467,8 @@ int __jbd2_log_start_commit(journal_t *journal, tid_t target)
 	/*
 	 * Are we already doing a recent enough commit?
 	 */
-	if (!tid_geq(journal->j_commit_request, target)) {
+	if (journal->j_running_transaction &&
+		journal->j_running_transaction->t_tid == target) {
 		/*
 		 * We want a new commit: OK, mark the request and wakup the
 		 * commit thread.  We do _not_ do the commit ourselves.
@@ -479,6 +480,17 @@ int __jbd2_log_start_commit(journal_t *journal, tid_t target)
 			  journal->j_commit_sequence);
 		wake_up(&journal->j_wait_commit);
 		return 1;
+	} else if (!tid_geq(journal->j_commit_request, target)) {
+		/* This should never happen, but if it does, preserve
+		   the evidence before kjournald goes into a loop and
+		   increments j_commit_sequence beyond all recognition. */
+		pr_err("jbd2: bad log_start_commit: %u %u %u\n",
+			journal->j_commit_request, journal->j_commit_sequence,
+			target);
+		if (journal->j_running_transaction)
+			pr_err("jbd2: current txn: %u\n",
+				journal->j_running_transaction->t_tid);
+		WARN_ON(1);
 	}
 	return 0;
 }
@@ -2434,4 +2446,3 @@ EXPORT_SYMBOL(jbd2_dev_to_name);
 MODULE_LICENSE("GPL");
 module_init(journal_init);
 module_exit(journal_exit);
-
