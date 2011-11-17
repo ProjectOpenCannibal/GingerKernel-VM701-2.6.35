@@ -75,7 +75,7 @@ task_notify_func(struct notifier_block *self, unsigned long val, void *data)
 {
 	struct task_struct *task = data;
 
-	if (task == lowmem_deathpending}
+	if (task == lowmem_deathpending)
 		lowmem_deathpending = NULL;
 
 	return NOTIFY_OK;
