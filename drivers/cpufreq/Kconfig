@@ -111,9 +111,9 @@ config CPU_FREQ_DEFAULT_GOV_CONSERVATIVE
 	  governor. If unsure have a look at the help section of the
 	  driver. Fallback governor will be the performance governor.
 
-config CPU_FREQ_DEFAULT_GOV_INTERACTIVEX
+config CPU_FREQ_DEFAULT_GOV_INTERACTIVE
 	bool "InteractiveX"
-	select CPU_FREQ_GOV_INTERACTIVEX
+	select CPU_FREQ_GOV_INTERACTIVE
 	help
 	  Use the CPUFreq governor 'InteractiveX' as default.
 
@@ -135,7 +135,7 @@ config CPU_FREQ_GOV_PERFORMANCE
 
 	  If in doubt, say Y.
 
-config CPU_FREQ_GOV_INTERACTIVEX
+config CPU_FREQ_GOV_INTERACTIVE
 	tristate "'InteractiveX' cpufreq policy governor"
 	depends on CPU_FREQ
 	help
